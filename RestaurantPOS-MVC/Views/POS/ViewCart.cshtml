@@ -1,0 +1,254 @@
+﻿@model Order
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+        }
+
+        h2 {
+            font-size: 28px;
+            color: #444;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .cart-items {
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            flex-basis: 40%;
+            margin-right: 10px;
+            text-align: left;
+        }
+
+        .cart-item-quantity,
+        .cart-item-total {
+            font-size: 14px;
+            color: #666;
+            flex-basis: 30%;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .total-price {
+            font-size: 22px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .checkout-button {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #E2EAF4;
+            color: Black;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            margin-top: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s;
+        }
+
+            .checkout-button:hover {
+                background-color: #98F5F9;
+            }
+
+        /* Update Quantity and Delete button */
+        .update-quantity-container {
+            display: flex;
+            align-items: center;
+            flex-basis: 60%;
+            justify-content: space-between;
+        }
+
+        .quantity-input {
+            width: 60px;
+            padding: 8px;
+            margin-right: 10px;
+            text-align: center;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .update-form button {
+            padding: 8px 12px;
+            font-size: 14px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            background-color: none;
+            color: black;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            .delete-button:hover {
+                background-color: none;
+            }
+
+        /* Mobile responsiveness */
+        @@media (max-width: 768px) {
+            .cart-item
+
+        {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .cart-item-name,
+        .cart-item-quantity,
+        .cart-item-total {
+            flex-basis: 100%;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .update-quantity-container {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        .delete-button {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .total-price {
+            font-size: 18px;
+        }
+
+        .checkout-button {
+            width: 100%;
+            text-align: center;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .quantity-input {
+            width: 80px;
+        }
+
+        }
+
+        @@media (max-width: 480px) {
+            body
+
+        {
+            margin: 10px;
+        }
+
+        h2 {
+            font-size: 24px;
+        }
+
+        .cart-items {
+            padding: 10px;
+        }
+
+        .cart-item-name {
+            font-size: 14px;
+        }
+
+        .cart-item-quantity,
+        .cart-item-total {
+            font-size: 12px;
+        }
+
+        .total-price {
+            font-size: 16px;
+        }
+
+        .checkout-button {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .quantity-input {
+            width: 60px;
+        }
+
+        button[type="submit"] {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Your Cart</h2>
+
+    <div class="cart-items">
+        @foreach (var orderItem in Model.OrderItems)
+        {
+            <div class="cart-item">
+                <span class="cart-item-name">@orderItem.Item.Name</span>
+
+                <!-- Quantity update form and Delete button aligned in a row -->
+                <div class="update-quantity-container">
+                    <form asp-action="UpdateQuantity" method="post" class="update-form">
+                        <input type="hidden" name="orderItemId" value="@orderItem.OrderItemId" />
+                        <input type="number" name="quantity" value="@orderItem.Quantity" min="1" class="quantity-input" />
+                        <button type="submit">Update Quantity</button>
+                    </form>
+
+                    
+                </div>
+                <!-- Delete item form aligned to the right -->
+                <form asp-action="DeleteFromCart" method="post">
+                    <input type="hidden" name="orderItemId" value="@orderItem.OrderItemId" />
+                    <button type="submit" class="delete-button">Delete</button>
+                </form>
+
+                <span class="cart-item-total">Total: Rs. @orderItem.TotalPrice.ToString("N2")</span>
+            </div>
+        }
+    </div>
+
+    <div class="total-price">
+        Total: Rs. @Model.OrderItems.Sum(oi => oi.TotalPrice).ToString("N2")
+    </div>
+
+    <a asp-action="Checkout" class="checkout-button">Proceed to Checkout</a>
+
+</body>
+</html>

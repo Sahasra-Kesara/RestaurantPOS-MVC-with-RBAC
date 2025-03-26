@@ -1,0 +1,79 @@
+﻿@model List<Item>
+
+<div class="container">
+    <h2 class="my-4 text-center">Item Report</h2>
+
+    <!-- Print Button -->
+    <div class="mb-3 text-center">
+        <button class="btn btn-light border" onclick="printReport()">Print Item Report</button>
+        <button class="btn btn-light border" id="exportCsvButton">Export Item CSV</button>
+    </div>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>SubCategory</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ItemId</td>
+                        <td>@item.Name</td>
+                        <td>Rs. @item.Price.ToString("N2")</td>
+                        <td>@item.Category</td>
+                        <td>@item.SubCategory</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Print-Only Style -->
+<style>
+    @@media print {
+        body *
+
+    {
+        visibility: hidden;
+    }
+
+    h2, .table, .table * {
+        visibility: visible;
+    }
+
+    .table {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    }
+</style>
+
+<!-- JavaScript for Printing -->
+<script>
+    function printReport() {
+        var printContent = document.querySelector("h2").outerHTML + document.querySelector(".table").outerHTML;
+        var originalContent = document.body.innerHTML;
+
+        document.body.innerHTML = printContent;
+
+        window.print();
+
+        document.body.innerHTML = originalContent;
+    }
+
+    document.getElementById('exportCsvButton').addEventListener('click', function() {
+        window.location.href = '/Manager/ExportItemsToCsv';
+    });
+</script>

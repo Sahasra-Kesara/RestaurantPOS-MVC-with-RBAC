@@ -1,0 +1,164 @@
+﻿@model RestaurantPOS_MVC.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <h1 class="my-4 text-center">Dashboard</h1>
+
+    <!-- Total Sales and Orders for Different Periods -->
+    <div class="row">
+        <!-- Card for Total Sales (Day, Week, Month, Year) -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Total Sales for the Day</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center text-success">@Model.TotalSalesDay.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Total Orders (Day, Week, Month, Year) -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Total Orders for the Day</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">@Model.TotalOrdersDay</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Weekly Sales -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Total Sales for the Week</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center text-success">@Model.TotalSalesWeek.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Weekly Orders -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Total Orders for the Week</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">@Model.TotalOrdersWeek</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales and Orders for Month and Year -->
+    <div class="row">
+        <!-- Card for Monthly Sales -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Total Sales for the Month</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center text-success">@Model.TotalSalesMonth.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Monthly Orders -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Total Orders for the Month</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">@Model.TotalOrdersMonth</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Yearly Sales -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Total Sales for the Year</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center text-success">@Model.TotalSalesYear.ToString("C")</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Yearly Orders -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Total Orders for the Year</h5>
+                </div>
+                <div class="card-body">
+                    <h3 class="text-center">@Model.TotalOrdersYear</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Menu Item Count -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Total Number of Menu Items</h5>
+        </div>
+        <div class="card-body">
+            <h3 class="text-center">@Model.TotalItems</h3>
+        </div>
+    </div>
+
+    <!-- Recent Orders Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Recent Orders</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                @foreach (var order in Model.RecentOrders)
+                {
+                        <li class="list-group-item">
+                            <strong>Order Date:</strong> @order.OrderDate.ToString("yyyy-MM-dd") <br />
+                            <strong>Order ID:</strong> @order.OrderId <br />
+                            <strong>Items:</strong>
+                            <ul>
+                            @foreach (var orderItem in order.OrderItems)
+                            {
+                                        <li>@orderItem.Item.Name - @orderItem.Quantity</li>
+                            }
+                            </ul>
+                        </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- Recent Bills Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Recent Bills</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                @foreach (var bill in Model.RecentBills)
+                {
+                        <li class="list-group-item">
+                            <strong>Payment Date:</strong> @bill.PaymentDate.ToString("yyyy-MM-dd") <br />
+                            <strong>Bill ID:</strong> @bill.BillId <br />
+                            <strong>Total Amount:</strong> @bill.TotalAmount.ToString("C")
+                        </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

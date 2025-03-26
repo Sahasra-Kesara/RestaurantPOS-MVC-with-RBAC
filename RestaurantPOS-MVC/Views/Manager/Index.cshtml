@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "Manager Panel";
+}
+
+<div class="container text-center bg-white py-5">
+    <h1 class="my-4">Manager Panel</h1>
+    <div class="row justify-content-center">
+        <!-- Navigation Buttons -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+            <a asp-controller="Manager" asp-action="MenuManagement" class="btn bg-gray-200 btn-lg btn-block" style="border: 1px solid #dcdcdc; border-radius: 8px;" target="_blank">
+                Menu Management
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+            <a asp-controller="Manager" asp-action="ItemsReport" class="btn bg-gray-200 btn-lg btn-block" style="border: 1px solid #dcdcdc; border-radius: 8px;" target="_blank">
+                Items Report
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+            <a asp-controller="Manager" asp-action="OrdersReport" class="btn bg-gray-200 btn-lg btn-block" style="border: 1px solid #dcdcdc; border-radius: 8px;" target="_blank">
+                Orders Report
+            </a>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+            <a asp-controller="Manager" asp-action="SalesReport" class="btn bg-gray-200 btn-lg btn-block" style="border: 1px solid #dcdcdc; border-radius: 8px;" target="_blank">
+                Sales Report
+            </a>
+        </div>
+
+        <!-- New Export Button -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+            <button class="btn bg-gray-200 btn-lg btn-block" style="border: 1px solid #dcdcdc; border-radius: 8px;" id="exportButton">
+                Export Last 30 Days Sales
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('exportButton').addEventListener('click', function() {
+        fetch('/Manager/ExportSales')
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'sales_last_30_days.csv';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error exporting sales:', error));
+    });
+</script>

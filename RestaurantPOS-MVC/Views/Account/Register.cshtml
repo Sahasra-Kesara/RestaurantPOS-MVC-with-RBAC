@@ -1,0 +1,38 @@
+﻿@model RestaurantPOS_MVC.Models.RegisterModel
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-success text-white">
+                    <h4>Register</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="Username" class="form-label">Username:</label>
+                            <input type="text" name="Username" class="form-control" placeholder="Enter your username" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Password" class="form-label">Password:</label>
+                            <input type="password" name="Password" class="form-control" placeholder="Enter your password" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="Role" class="form-label">Role:</label>
+                            <select name="Role" class="form-select" required>
+                                <option value="Cashier">Cashier</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-block">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

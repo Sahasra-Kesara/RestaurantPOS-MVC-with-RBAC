@@ -1,0 +1,158 @@
+﻿@model List<RestaurantPOS_MVC.Models.Order>
+
+<div class="container">
+    <h2 class="my-4 text-center">Orders Report</h2>
+
+    <!-- Report Type Selection -->
+    <form method="get" action="@Url.Action("OrdersReport", "Manager")" class="mb-4">
+        <div class="form-group">
+            <label for="reportType">Select Report Type:</label>
+            <select id="reportType" name="reportType" class="form-control">
+                <option value="day">Day</option>
+                <option value="year">Year</option>
+            </select>
+        </div>
+
+        <!-- Date Picker for Day Selection -->
+        <div class="form-group" id="daySelection">
+            <label for="reportDate">Select Date:</label>
+            <input type="date" id="reportDate" name="reportDate" value="@ViewData["ReportDate"]" class="form-control" />
+        </div>
+
+
+        <!-- Year Input for Year Selection -->
+        <div class="form-group" id="yearSelection" style="display: none;">
+            <label for="reportYear">Select Year:</label>
+            <input type="number" id="reportYear" name="reportYear" min="2000" max="2100" value="@ViewData["ReportYear"]" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-light border">Generate Report</button>
+    </form>
+
+    <!-- Display the selected date or year on the page -->
+    @if (ViewData["ReportDate"] != null || ViewData["ReportYear"] != null)
+    {
+        <p id="selectedDate" class="mb-4">
+            <strong>Selected: </strong>
+            @if (ViewData["ReportDate"] != null)
+            {
+                <span>Date - @ViewData["ReportDate"]</span>
+            }
+            else if (ViewData["ReportYear"] != null)
+            {
+                <span>Year - @ViewData["ReportYear"]</span>
+            }
+        </p>
+    }
+
+
+    <!-- Buttons for Print Report and Export CSV -->
+    <div class="mb-3 text-center">
+        <button class="btn btn-light border" onclick="printReport()">Print Report</button>
+        <button class="btn btn-light border" id="exportCsvButton">Export to CSV</button>
+    </div>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Order Date</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.OrderDate.ToString("dd-MM-yyyy")</td>
+                        <td>
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <p>@item.Item.Name (x @item.Quantity)</p>
+                            }
+                        </td>
+                        <td>Rs. @order.OrderItems.Sum(oi => oi.TotalPrice).ToString("N2")</td>
+                        <td>@(order.IsPaid ? "Paid" : "Pending")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Print-Only Style -->
+<style>
+    @@media print {
+        body * {
+            visibility: hidden;
+        }
+
+        h2, .table, #selectedDate, .table * {
+            visibility: visible;
+        }
+
+        .table {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        #selectedDate {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            font-weight: bold;
+        }
+    }
+</style>
+
+<!-- JavaScript for printing, exporting CSV, and toggling inputs -->
+<script>
+    // Function to print the report
+    function printReport() {
+        var printContent = document.querySelector("h2").outerHTML +
+            document.querySelector("#selectedDate").outerHTML +
+            document.querySelector(".table").outerHTML;
+        var originalContent = document.body.innerHTML;
+
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+    }
+
+    // Function to handle CSV export
+    document.getElementById('exportCsvButton').addEventListener('click', function () {
+        var reportType = document.getElementById('reportType').value;
+        var reportDate = document.getElementById('reportDate').value;
+        var reportYear = document.getElementById('reportYear').value;
+
+        if (reportType === 'day' && reportDate) {
+            window.location.href = '/Manager/ExportOrdersToCsv?reportType=day&reportDate=' + reportDate;
+        } else if (reportType === 'year' && reportYear) {
+            window.location.href = '/Manager/ExportOrdersToCsv?reportType=year&reportYear=' + reportYear;
+        } else {
+            alert('Please select a valid date or year.');
+        }
+    });
+
+    // Function to toggle between day and year inputs
+    document.getElementById('reportType').addEventListener('change', function () {
+        var daySelection = document.getElementById('daySelection');
+        var yearSelection = document.getElementById('yearSelection');
+
+        if (this.value === 'day') {
+            daySelection.style.display = 'block';
+            yearSelection.style.display = 'none';
+        } else {
+            daySelection.style.display = 'none';
+            yearSelection.style.display = 'block';
+        }
+    });
+
+</script>

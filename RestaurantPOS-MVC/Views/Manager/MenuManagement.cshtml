@@ -1,0 +1,36 @@
+﻿@model List<Item>
+
+<div class="container">
+    <h2 class="my-4">Menu Management</h2>
+    <a href="/Manager/AddMenuItem" class="btn btn-primary mb-3">Add New Item</a>
+
+    <!-- Responsive Table -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Subcategory</th>
+                    <th>Price</th>
+                    <th class="print-hidden">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Category</td>
+                        <td>@item.SubCategory</td>
+                        <td>Rs. @item.Price.ToString("N2")</td>
+                        <td class="print-hidden">
+                            <a href="/Manager/EditMenuItem/@item.ItemId" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="/Manager/DeleteMenuItem/@item.ItemId" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

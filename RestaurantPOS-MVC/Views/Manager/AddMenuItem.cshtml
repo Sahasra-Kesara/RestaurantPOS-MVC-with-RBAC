@@ -1,0 +1,74 @@
+﻿@model RestaurantPOS_MVC.Models.Item
+
+<h2>Add New Menu Item</h2>
+
+<form asp-action="AddMenuItem" method="post">
+    <div class="form-group">
+        <label for="Name">Item Name</label>
+        <input type="text" class="form-control" id="Name" name="Name" required>
+    </div>
+
+    <div class="form-group">
+        <label for="Category">Category</label>
+        <select class="form-control" id="Category" name="Category" onchange="handleCategoryChange()" required>
+            <option value="" disabled selected>Select a category</option>
+            @foreach (var category in ViewBag.Categories)
+            {
+                <option value="@category">@category</option>
+            }
+            <option value="new">Add New Category</option>
+        </select>
+        <input type="text" class="form-control mt-2 d-none" id="NewCategory" name="NewCategory" placeholder="Enter new category">
+    </div>
+
+    <div class="form-group">
+        <label for="SubCategory">Subcategory</label>
+        <select class="form-control" id="SubCategory" name="SubCategory">
+            <option value="" disabled selected>Select a subcategory</option>
+            @foreach (var subcategory in ViewBag.SubCategories)
+            {
+                <option value="@subcategory">@subcategory</option>
+            }
+            <option value="new">Add New Subcategory</option>
+        </select>
+        <input type="text" class="form-control mt-2 d-none" id="NewSubCategory" name="NewSubCategory" placeholder="Enter new subcategory">
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Price</label>
+        <input type="number" step="0.01" class="form-control" id="Price" name="Price" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="MenuManagement" class="btn btn-secondary">Cancel</a>
+</form>
+
+<script>
+    // Show/hide input field for adding a new category
+    function handleCategoryChange() {
+        const categorySelect = document.getElementById('Category');
+        const newCategoryInput = document.getElementById('NewCategory');
+        if (categorySelect.value === 'new') {
+            newCategoryInput.classList.remove('d-none');
+            newCategoryInput.required = true;
+        } else {
+            newCategoryInput.classList.add('d-none');
+            newCategoryInput.value = '';
+            newCategoryInput.required = false;
+        }
+    }
+
+    // Show/hide input field for adding a new subcategory
+    document.getElementById('SubCategory').addEventListener('change', function () {
+        const subCategorySelect = document.getElementById('SubCategory');
+        const newSubCategoryInput = document.getElementById('NewSubCategory');
+        if (subCategorySelect.value === 'new') {
+            newSubCategoryInput.classList.remove('d-none');
+            newSubCategoryInput.required = true;
+        } else {
+            newSubCategoryInput.classList.add('d-none');
+            newSubCategoryInput.value = '';
+            newSubCategoryInput.required = false;
+        }
+    });
+</script>

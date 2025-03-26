@@ -1,0 +1,239 @@
+﻿@using System.Globalization
+@model List<Item>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food and Beverage Menu</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        /* CSS for grid layout */
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Flexible columns */
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .item-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .item-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.2s ease;
+        }
+
+            .item-button:hover {
+                transform: scale(1.05);
+            }
+
+            .item-button div {
+                margin: 8px 0;
+            }
+
+        .category-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .subcategory-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        /* Search bar styling */
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Category and subcategory button styling */
+        .category-button, .subcategory-button {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+            .category-button:hover, .subcategory-button:hover {
+                background-color: #ddd;
+            }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive design for smaller screens */
+        @@media (max-width: 768px) {
+            h2
+
+        {
+            font-size: 20px;
+        }
+
+        .category-header {
+            font-size: 18px;
+        }
+
+        .subcategory-header {
+            font-size: 16px;
+        }
+
+        .item-button {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .item-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        }
+
+        .category-button, .subcategory-button {
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Food and Beverage Menu</h2>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search for items by name or ID..." onkeyup="filterItems()">
+    </div>
+
+    <!-- Category Buttons -->
+    <div id="categoryButtons">
+        @foreach (var categoryGroup in Model.GroupBy(item => item.Category))
+        {
+            <button class="category-button" onclick="toggleCategoryItems('@categoryGroup.Key')">
+                @categoryGroup.Key
+            </button>
+        }
+    </div>
+
+    <!-- Category Sections -->
+    @foreach (var categoryGroup in Model.GroupBy(item => item.Category))
+    {
+        <div class="category-section hidden" id="category-@categoryGroup.Key">
+            <div class="category-header">@categoryGroup.Key</div>
+
+            <!-- Subcategory Buttons -->
+            <div class="subcategory-buttons">
+                @foreach (var subcategoryGroup in categoryGroup.GroupBy(item => item.SubCategory))
+                {
+                    <button class="subcategory-button" onclick="toggleSubcategoryItems('@categoryGroup.Key', '@subcategoryGroup.Key')">
+                        @subcategoryGroup.Key
+                    </button>
+                }
+            </div>
+
+            <!-- Subcategory Items -->
+            @foreach (var subcategoryGroup in categoryGroup.GroupBy(item => item.SubCategory))
+            {
+                <div class="subcategory-section hidden" id="subcategory-@categoryGroup.Key-@subcategoryGroup.Key">
+                    <div class="subcategory-header">@subcategoryGroup.Key</div>
+
+                    <div class="item-grid" data-category="@categoryGroup.Key" data-subcategory="@subcategoryGroup.Key">
+                        @foreach (var item in subcategoryGroup)
+                        {
+                            <form asp-action="AddToCart" method="post" class="item-form">
+                                <input type="hidden" name="itemId" value="@item.ItemId" />
+                                <button type="submit" class="item-button" data-name="@item.Name" data-id="@item.ItemId">
+                                    <div>@item.Name</div>
+                                    <div>Rs. @item.Price.ToString("N2")</div>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <script>
+        function filterItems() {
+            const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+            const items = document.querySelectorAll(".item-button");
+
+            items.forEach(item => {
+                const itemName = item.getAttribute("data-name").toLowerCase();
+                const itemId = item.getAttribute("data-id").toLowerCase();
+
+                // Display item if query matches either name or ID
+                if (itemName.includes(searchQuery) || itemId.includes(searchQuery)) {
+                    item.parentElement.style.display = "flex";
+                } else {
+                    item.parentElement.style.display = "none";
+                }
+            });
+        }
+
+        function toggleCategoryItems(category) {
+            const allCategorySections = document.querySelectorAll('.category-section');
+            allCategorySections.forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            const selectedCategorySection = document.getElementById(`category-${category}`);
+            selectedCategorySection.classList.remove('hidden');
+        }
+
+        function toggleSubcategoryItems(category, subcategory) {
+            const allSubcategorySections = document.querySelectorAll(`#category-${category} .subcategory-section`);
+            allSubcategorySections.forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            const selectedSubcategorySection = document.getElementById(`subcategory-${category}-${subcategory}`);
+            selectedSubcategorySection.classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
